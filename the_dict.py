@@ -1,6 +1,6 @@
 import json
-import difflib
 from difflib import get_close_matches
+from KeyInput import *
 
 
 def returnvalue(file):
@@ -9,35 +9,45 @@ def returnvalue(file):
 If you are looking for a word you can enter it below. 
 You can end the application with '\end'.\n""")
     while True:
-        key_input = input("Enter Word: ")
-        if key_input == "\end":
+        KeyInput.word = input("Enter Word: ")
+
+
+        if KeyInput.word == "\end":
             return "Thanks for using this program!"
-        elif key_input.lower() in data:
-            new_key_input = key_input.lower()
-        elif key_input.capitalize() in data:
-            new_key_input = key_input.capitalize()
-        elif key_input.upper() in data:
-            new_key_input = key_input.upper()
+        elif KeyInput.word.lower() in data:
+            KeyInput.word = KeyInput.word.lower()
+            KeyInput.status = True
+        elif KeyInput.word.capitalize() in data:
+            KeyInput.word = KeyInput.word.capitalize()
+            KeyInput.status = True
+        elif KeyInput.word.upper() in data:
+            KeyInput.word = KeyInput.word.upper()
+            KeyInput.status = True
         else:
-            new_key_input = key_input
-        if new_key_input in data:
-            definition = data[new_key_input]
+            KeyInput.status = False
+
+
+        if KeyInput.status == True:
+            definition = data[KeyInput.word]
             print(' \n'.join(definition))
             continue
-        elif len(get_close_matches(new_key_input, data.keys())) > 0:
-            yes_or_no = input('Did you mean this word instead?: {}. Enter Y for Yes, N for No: '.format(get_close_matches(new_key_input, data.keys())[0]))
+        elif len(get_close_matches(KeyInput.word, data.keys())) > 0:
+            close_match = get_close_matches(KeyInput.word, data.keys())[0]
+            yes_or_no = input('Did you mean this word instead?: {}. Enter Y for Yes, N for No: '.format(close_match))
             if yes_or_no == "Y" or yes_or_no == "y":
-                definition = data[get_close_matches(new_key_input, data.keys())[0]]
+                definition = data[close_match]
                 print(' \n'.join(definition))
                 continue
             elif yes_or_no == "N" or yes_or_no == "n":
                 print("What word do you mean instead?")
+                continue
             else:
                 print("please try again")
                 continue
         else:
             print("This word does not exist. Please double check it.")
             continue
+
 
 file = "data.json"
 print(returnvalue(file))
